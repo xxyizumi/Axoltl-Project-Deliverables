@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mybatisbasics.mapper.UserMapper">
+
+    <!-- 全ユーザー取得 -->
+    <select id="findAll" resultType="User">
+        SELECT id, name, email, created_at
+        FROM users
+        ORDER BY id
+    </select>
+
+    <!-- IDで検索 -->
+    <select id="findById" parameterType="Long" resultType="User">
+        SELECT id, name, email, created_at
+        FROM users
+        WHERE id = #{id}
+    </select>
+
+    <!-- ユーザー更新 -->
+    <update id="update" parameterType="User">
+        UPDATE users
+        SET name = #{name},
+            email = #{email}
+        WHERE id = #{id}
+    </update>
+
+    <!-- ユーザー削除 -->
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM users
+        WHERE id = #{id}
+    </delete>
+
+    <!-- ユーザー登録（自動採番IDを取得） -->
+    <insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (name, email)
+        VALUES (#{name}, #{email})
+    </insert>
+
+    <!-- Emailで検索 -->
+    <select id="findByEmail" parameterType="String" resultType="User">
+        SELECT id, name, email, created_at
+        FROM users
+        WHERE email = #{email}
+    </select>
+
+    <!-- ユーザーの総数を取得 -->
+    <select id="count" resultType="int">
+        SELECT count(*)
+        FROM users
+    </select>
+
+    <!-- ユーザ名の部分一致で検索 -->
+    <select id="findByNameLike" parameterType="String" resultType="User">
+        SELECT id, name, email, created_at
+        FROM users
+        WHERE name LIKE CONCAT('%', #{name}, '%')
+    </select>
+
+    <!-- 条件検索 -->
+    <select id="findByCondition" resultType="User">
+        SELECT id, name, email, created_at
+        FROM users
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="email != null and email != ''">
+                AND email LIKE CONCAT('%', #{email}, '%')
+            </if>
+         </where>
+        ORDER BY id
+    </select>
+
+    <!-- 複数IDで検索 -->
+    <select id="findByIds" resultType="User">
+        SELECT id, name, email, created_at
+        FROM users
+        WHERE id IN
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        ORDER BY id
+    </select>
+
+    <!-- 複数IDで削除 -->
+    <delete id="deleteByIds">
+        DELETE FROM users
+        WHERE id IN
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 一括登録 -->
+    <insert id="insertBatch">
+        INSERT INTO users (name, email) VALUES
+        <foreach item="user" collection="list" separator=",">
+            (#{user.name}, #{user.email})
+        </foreach>
+    </insert>
+
+    <!-- ソート条件付き検索 -->
+    <select id="findAllWithSort" resultType="User">
+        SELECT id, name, email, created_at
+        FROM users
+        ORDER BY
+        <choose>
+            <when test="sortBy == 'name'">
+                name ASC
+            </when>
+            <when test="sortBy == 'email'">
+                email ASC
+            </when>
+            <when test="sortBy == 'createdAt'">
+                created_at DESC
+            </when>
+            <otherwise>
+                id ASC
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 部分更新 -->
+    <update id="updateSelective" parameterType="User">
+        UPDATE users
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 高度な条件検索 -->
+    <select id="search" parameterType="com.example.mybatisbasics.dto.UserSearchCondition" resultType="User">
+        SELECT id, name, email, created_at
+        FROM users
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="email != null and email != ''">
+                AND email LIKE CONCAT('%', #{email}, '%')
+            </if>
+            <if test="ids != null and ids.size() > 0">
+                AND id IN
+                <foreach item="id" collection="ids" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        <choose>
+            <when test="sortBy == 'name'">
+                ORDER BY name ASC
+            </when>
+            <when test="sortBy == 'email'">
+                ORDER BY email ASC
+            </when>
+            <otherwise>
+                ORDER BY id ASC
+            </otherwise>
+        </choose>
+        <if test="limit != null">
+            LIMIT #{limit}
+            <if test="offset != null">
+                OFFSET #{offset}
+            </if>
+        </if>
+    </select>
+    <select id="findWithPagination" resultType="User">
+        SELECT id, name, email, created_at
+        FROM users
+        LIMIT #{size}
+        OFFSET 0 + (#{size} * #{page} - 1)
+    </select>
+    <select id="findNameOrEmail" resultType="User">
+        SELECT id, name, email, created_at
+        FROM users
+        where 
+        <trim prefixOverrides="OR">
+            <if test="name != null">
+                name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="email != null">
+                OR email LIKE CONCAT('%', #{email}, '%')
+            </if>
+        </trim>
+    </select>
+    <select id="findWithinCreateAtRange" resultType="User">
+        SELECT id, name, email, created_at
+        FROM users
+        <where>
+            <if test="fromDateTime != null">
+                created_at &gt;= #{fromDateTime}
+            </if>
+            <if test="toDateTime != null">
+                AND created_at &lt;= #{toDateTime}
+            </if>
+        </where>
+    </select>
+</mapper>
