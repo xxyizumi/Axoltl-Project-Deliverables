@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mybatisbasics.mapper.OrderMapper">
+    <!-- 全注文取得 -->
+    <select id="findAll" resultType="Order">
+        SELECT id, user_id, product_name, amount, ordered_at 
+        FROM orders
+        ORDER BY id
+    </select>
+
+    <!-- IDで検索 -->
+    <select id="findById" parameterType="Long" resultType="Order">
+        SELECT id, user_id, product_name, amount, ordered_at 
+        FROM orders
+        WHERE id = #{id}
+    </select>
+
+    <!-- 注文登録（自動採番IDを取得） -->
+    <insert id="insert" parameterType="Order" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO orders (user_id, product_name, amount)
+        VALUES (#{userId}, #{productName}, #{amount})
+    </insert>
+
+    <!-- 注文更新 -->
+    <update id="update" parameterType="Order">
+        UPDATE orders
+        SET product_name = #{productName},
+            amount = #{amount}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 注文削除 -->
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM orders
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 注文一括削除 -->
+    <delete id="deleteByIds" parameterType="List">
+        DELETE FROM orders
+        where id in
+        <foreach item="id" index="index" collection="list"
+            open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
