@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatisadvanced.mapper.OrderMapper">
+
+    <!--  基本的なResultMap（ユーザなし） -->
+    <resultMap id="OrderResultMap" type="Order">
+        <id property="id" column="order_id"/>
+        <result property="userId" column="order_user_id"/>
+        <result property="status" column="order_status"/>
+        <result property="totalAmount" column="order_total_amount"/>
+        <result property="orderedAt" column="order_ordered_at"/>
+    </resultMap>
+
+    <!-- 多対1のResultMap: 注文とユーザー -->
+    <resultMap id="OrderWithUserResultMap" type="Order">
+        <id property="id" column="order_id"/>
+        <result property="userId" column="order_user_id"/>
+        <result property="status" column="order_status"/>
+        <result property="totalAmount" column="order_total_amount"/>
+        <result property="orderedAt" column="order_ordered_at"/>
+        
+        <!-- 多対1のマッピング: association -->
+        <association property="user" javaType="User">
+            <id property="id" column="user_id"/>
+            <result property="name" column="user_name"/>
+            <result property="email" column="user_email"/>
+        </association>
+    </resultMap>
+
+     <!-- 多対1のResultMap: 注文と注文詳細 -->
+    <resultMap id="OrderWithDetailResultMap" type="Order">
+        <id property="id" column="order_id"/>
+        <result property="userId" column="order_user_id"/>
+        <result property="status" column="order_status"/>
+        <result property="totalAmount" column="order_total_amount"/>
+        <result property="orderedAt" column="order_ordered_at"/>
+        
+        <!-- 1対多のマッピング: collection -->
+        <collection property="orderDetails" ofType="OrderDetail">
+            <id property="id" column="id"/>
+            <result property="orderId" column="order_id"/>
+            <result property="productName" column="product_name"/>
+            <result property="quantity" column="quantity"/>
+            <result property="unitPrice" column="unit_price"/>
+            <result property="createdAt" column="created_at"/>
+        </collection>
+    </resultMap>
+
+    <!-- ユーザーIDで検索 -->
+    <select id="findByUserId" parameterType="Long" resultType="Order">
+        SELECT id, user_id, product_name, amount, ordered_at 
+        FROM orders
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 注文を取得（ユーザー情報付き） -->
+    <select id="findByIdWithUser" resultMap="OrderWithUserResultMap">
+        SELECT 
+            o.id AS order_id,
+            o.user_id AS order_user_id,
+            o.status AS order_status,
+            o.total_amount AS order_total_amount,
+            o.ordered_at AS order_ordered_at,
+            u.id AS user_id,
+            u.name AS user_name,
+            u.email AS user_email
+        FROM orders o
+        INNER JOIN users u ON o.user_id = u.id
+        WHERE o.id = #{id}
+    </select>
+    
+    <!-- 注文を取得（注文詳細付き） -->
+    <select id="findByIdWithDetails" resultMap="OrderWithDetailResultMap">
+        SELECT 
+            o.id AS order_id,
+            o.user_id AS order_user_id,
+            o.status AS order_status,
+            o.total_amount AS order_total_amount,
+            o.ordered_at AS order_ordered_at,
+            od.id AS id,
+            od.order_id  AS order_id,
+            od.product_name AS product_name,
+            od.quantity AS quantity,
+            od.unit_price AS unit_price,
+            od.created_at AS created_at
+        FROM orders o
+        INNER JOIN order_details od ON o.id = od.order_id
+        WHERE o.id = #{id}
+    </select>
+
+    <!-- カーソルで全注文を取得 -->
+    <select id="findAllWithCursor" resultMap="OrderResultMap" fetchSize="100">
+        SELECT 
+            o.id AS order_id,
+            o.user_id AS order_user_id,
+            o.status AS order_status,
+            o.total_amount AS order_total_amount,
+            o.ordered_at AS order_ordered_at
+        FROM orders o
+        ORDER BY id
+    </select>
+</mapper>
