@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.0</version>
+        <relativePath/>
+    </parent>
+    
+    <groupId>com.example</groupId>
+    <artifactId>mybatis-advanced</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>mybatis-advanced</name>
+    <description>MyBatis 応用編 - 学習用プロジェクト</description>
+    
+    <properties>
+        <java.version>17</java.version>
+        <mybatis-spring-boot.version>3.0.3</mybatis-spring-boot.version>
+        <mybatis-generator.version>1.4.2</mybatis-generator.version>
+    </properties>
+    
+    <dependencies>
+        <!-- Spring Boot Starter Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        
+        <!-- MyBatis Spring Boot Starter -->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${mybatis-spring-boot.version}</version>
+        </dependency>
+        
+        <!-- H2 Database -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <!-- Spring Boot Starter Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.generator</groupId>
+            <artifactId>mybatis-generator-core</artifactId>
+            <version>${mybatis-generator.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!-- MyBatis Generator Plugin -->
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>${mybatis-generator.version}</version>
+                <configuration>
+                    <!-- 設定ファイルの場所 -->
+                    <configurationFile>
+                        ${basedir}/src/main/resources/generatorConfig.xml
+                    </configurationFile>
+                    <!-- 既存ファイルを上書き -->
+                    <overwrite>true</overwrite>
+                    <!-- 詳細ログを出力 -->
+                    <verbose>true</verbose>
+                </configuration>
+                <dependencies>
+                    <!-- H2 JDBCドライバ -->
+                    <dependency>
+                        <groupId>com.h2database</groupId>
+                        <artifactId>h2</artifactId>
+                        <version>2.2.224</version>
+                    </dependency>
+                <dependency>
+                    <groupId>com.example</groupId>
+                    <artifactId>mbgcstplugin</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                    <scope>system</scope>
+                    <systemPath>${project.basedir}/src/main/java/com/example/mybatisadvanced/lib/mbgcstplugin-1.0-SNAPSHOT.jar</systemPath>
+                </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    
+    <context id="MySqlContext" targetRuntime="MyBatis3">
+        
+        <!-- プラグイン設定 -->
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
+        <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
+        <!-- equals()とhashCode()を生成 -->
+        <plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin"/>
+
+        <!-- Fluentセッター（メソッドチェーン）を生成 -->
+        <plugin type="org.mybatis.generator.plugins.FluentBuilderMethodsPlugin"/>
+
+        <!-- PasswordにJSONIgnoreを付与する -->
+        <plugin type="com.example.mbcstplugin.plugin.JsonIgnorePlugin"/>
+
+        <!-- コメント設定 -->
+        <commentGenerator>
+            <!-- 自動生成コメントを抑制 -->
+            <property name="suppressAllComments" value="false"/>
+            <!-- 生成日時を抑制（Git差分を減らす） -->
+            <property name="suppressDate" value="true"/>
+            <!-- DBのカラムコメントを追加 -->
+            <property name="addRemarkComments" value="true"/>
+        </commentGenerator>
+        
+        <!-- JDBC接続設定 -->
+        <jdbcConnection 
+            driverClass="org.h2.Driver"
+            connectionURL="jdbc:h2:file:./data/mybatisdb"
+            userId="sa"
+            password=""/>
+        
+        <!-- 型解決設定 -->
+        <javaTypeResolver>
+            <property name="useJSR310Types" value="true"/>
+        </javaTypeResolver>
+        
+        <!-- エンティティ生成設定 -->
+        <javaModelGenerator 
+            targetPackage="com.example.mybatisadvanced.entity.generated"
+            targetProject="src/main/java"/>
+        
+        <!-- Mapper XML生成設定 -->
+        <sqlMapGenerator 
+            targetPackage="mapper.generated"
+            targetProject="src/main/resources"/>
+        
+        <!-- Mapperインターフェース生成設定 -->
+        <javaClientGenerator 
+            type="XMLMAPPER"
+            targetPackage="com.example.mybatisadvanced.mapper.generated"
+            targetProject="src/main/java"/>
+        
+        <!-- テーブル設定 -->
+        <table tableName="users" domainObjectName="GeneratedUser">
+            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
+            <!-- パスワードカラムを生成しない -->
+            <ignoreColumn column="password_hash"/>
+        </table>
+        <table tableName="orders" domainObjectName="GeneratedOrder">
+            <!-- EnumへのマッピングをTypeHandlerで処理 -->
+            <columnOverride column="status" 
+                javaType="com.example.mybatisadvanced.entity.OrderStatus"
+                typeHandler="com.example.mybatisadvanced.handler.OrderStatusTypeHandler"/>
+        </table>
+        <table tableName="order_details" domainObjectName="GeneratedOrderDetails">
+            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
+        </table>
+        <table tableName="products" domainObjectName="GeneratedProducts">
+            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
+        </table>
+    </context>
+</generatorConfiguration>
