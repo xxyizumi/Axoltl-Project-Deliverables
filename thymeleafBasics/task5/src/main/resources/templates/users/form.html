@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/commonHead :: commonHead('ユーザー一覧')}">
+</head>
+<body>
+    <!-- ヘッダーフラグメント -->
+    <div th:replace="~{fragments/header :: header}"></div>
+    <div class="main-content">
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+        <main>
+            <div th:replace="~{fragments/errorMessage :: alert('info', 'メッセージエリア')}"></div>
+            <h2>ユーザー登録</h2>
+            
+            <form th:action="@{/users}" th:object="${userForm}" method="post">
+                <div class="form-group">
+                    <label for="name">名前</label>
+                    <input type="text" id="name" th:field="*{name}"
+                        th:classappend="${#fields.hasErrors('name')} ? 'error' : ''">
+                    <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message">
+                        エラーメッセージ
+                    </p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">メールアドレス</label>
+                    <input type="email" id="email" th:field="*{email}"
+                        th:classappend="${#fields.hasErrors('email')} ? 'error' : ''">
+                    <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message">
+                        エラーメッセージ
+                    </p>
+                </div>
+                
+                <button type="submit">登録</button>
+            </form>
+        </main>
+    </div>
+    
+    <!-- フッターフラグメント -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
