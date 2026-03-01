@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/commonHead :: commonHead('Thymeleaf 基礎編')}">
+</head>
+<body>
+    <!-- ヘッダーフラグメントを挿入 -->
+    <div th:replace="~{fragments/header :: header}"></div>
+    <div class="main-content">
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+        <main>
+            <h2>ようこそ！</h2>
+            <p th:text="${message}">デフォルトメッセージ</p>
+            
+            <h3>学習メニュー</h3>
+            <ul>
+                <li><a th:href="@{/users}" style="color: #00509b;">ユーザー一覧を見る</a></li>
+                <li><a th:href="@{/users/new}" style="color: #00509b;">ユーザーを登録する</a></li>
+            </ul>
+        </main>
+    </div>
+
+    <!-- フッターフラグメントを挿入 -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
