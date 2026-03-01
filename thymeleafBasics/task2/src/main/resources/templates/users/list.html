@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ユーザー一覧</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #4CAF50; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        tr:nth-child(odd) { background-color: #e4fcff; }
+    </style>
+</head>
+<body>
+    <h1>ユーザー一覧</h1>
+
+    <!-- 新規登録ボタン -->
+    <a th:href="@{/users/new}" class="btn">+ 新規登録</a>
+
+    <!-- 件数を表示（th:if で条件分岐） -->
+    <p th:if="${totalCount > 0}">
+        全 <span th:text="${totalCount}">0</span> 件のユーザーがいます。
+    </p>
+    <p th:unless="${totalCount > 0}">
+        ユーザーが登録されていません。
+    </p>
+    
+    <!-- ユーザーがいる場合のみテーブルを表示 -->
+    <table th:if="${totalCount > 0}">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>名前</th>
+                <th>メールアドレス</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- th:each でリストをループ -->
+            <tr th:each="user, stat : ${users}" 
+                th:class="${stat.even} ? 'even-row' : 'odd-row'">
+                <td th:text="${user.id}">1</td>
+                <td th:text="${user.name}">サンプル名</td>
+                <td th:text="${user.email}">sample@example.com</td>
+                <td>
+                    <a th:href="@{/users/{id}(id=${user.id})}">詳細</a>
+                    <a th:href="@{'mailto:' + ${user.email}}">メール送信</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <hr>
+    <a th:href="@{/}">トップページに戻る</a>
+</body>
+</html>
