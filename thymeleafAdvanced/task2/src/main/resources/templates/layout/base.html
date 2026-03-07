@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Thymeleaf 応用編</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <nav class="nav">
+            <a th:href="@{/}" class="logo">🚀 Thymeleaf 応用編</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/}">ホーム</a></li>
+                <li><a th:href="@{/about}">About</a></li>
+                <li><a th:href="@{/contact}">お問い合わせ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <section layout:fragment="content">
+            <!-- 子ページのコンテンツがここに挿入される -->
+            <p>デフォルトコンテンツ（子ページで上書きされます）</p>
+        </section>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <p>&copy; 2024 Thymeleaf 応用編. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script layout:fragment="scripts">
+        <!-- 子ページのスクリプトがここに挿入される -->
+    </script>
+</body>
+</html>

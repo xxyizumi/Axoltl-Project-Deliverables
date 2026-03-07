@@ -1,0 +1,112 @@
+/* 基本スタイル */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ヘッダー */
+.header {
+    background-color: #2c3e50;
+    padding: 1rem 2rem;
+}
+
+.header-admin {
+    background-color: #ff7878;
+    padding: 1rem 2rem;
+}
+
+.sidebar {
+    background-color: #ff7878;
+    width:150px;
+    height:300px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.sidebar li {
+    list-style:none;
+}
+
+.sidebar li a {
+    color: white;
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: #ecf0f1;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #3498db;
+}
+
+/* メインコンテンツ */
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    display:flex;
+}
+
+/* フッター */
+.footer {
+    background-color: #34495e;
+    color: #ecf0f1;
+    text-align: center;
+    padding: 1rem;
+    margin-top: auto;
+}
+
+/* ページ固有のスタイル */
+.page-title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.page-description {
+    color: #7f8c8d;
+    margin-bottom: 2rem;
+}
+
+.card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
