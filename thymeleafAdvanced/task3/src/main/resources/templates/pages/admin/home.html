@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin-base}">
+<head>
+    <title>ホーム</title>
+</head>
+<body>
+    <section layout:fragment="sidebar">
+        <aside class="sidebar">
+            <ul>
+                <li><a th:href="@{/}">🏠 ホーム</a></li>
+                <li><a th:href="@{/about}">👥 About</a></li>
+                <li><a th:href="@{/contact}">➕ お問い合わせ</a></li>
+            </ul>
+        </aside>
+    </section>
+    <section layout:fragment="content">
+        <h1 class="page-title">ホーム</h1>
+        <p class="page-description" th:text="${message}">メッセージ</p>
+        
+        <div class="card">
+            <h2>Layout Dialectを学習中</h2>
+            <p>このページはベースレイアウトを継承しています。</p>
+            <p>ヘッダーとフッターは共通で、このコンテンツ部分のみが各ページ固有です。</p>
+        </div>
+    </section>
+</body>
+</html>

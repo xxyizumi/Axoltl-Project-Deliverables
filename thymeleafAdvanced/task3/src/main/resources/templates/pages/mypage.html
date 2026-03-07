@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>マイページ</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1 class="page-title">マイページ</h1>
+        <p class="page-description">ログイン中のユーザー専用ページです</p>
+        
+        <div class="card">
+            <h2>ユーザー情報</h2>
+            <p>ユーザー名: <strong sec:authentication="name">ユーザー名</strong></p>
+            <p>ロール: <span sec:authentication="principal.authorities">ロール</span></p>
+        </div>
+        
+        <div class="card">
+            <h2>このページについて</h2>
+            <p>このページは<code>sec:authorize="isAuthenticated()"</code>により、
+               ログイン済みユーザーにのみ表示されるナビゲーションリンクからアクセスできます。</p>
+        </div>
+    </section>
+</body>
+</html>
