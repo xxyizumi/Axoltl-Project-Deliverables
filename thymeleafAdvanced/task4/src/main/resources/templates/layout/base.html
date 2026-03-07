@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Thymeleaf 応用編</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <nav class="nav">
+            <a th:href="@{/}" class="logo">Thymeleaf 応用編</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/}">ホーム</a></li>
+                <li><a th:href="@{/about}">About</a></li>
+                <li><a th:href="@{/contact}">お問い合わせ</a></li>
+                
+                <!-- ログイン済みの場合のみ表示 -->
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/mypage}">マイページ</a>
+                </li>
+                <li sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin/}">管理者</a>
+                </li>
+                <li sec:authorize="isAuthenticated() and hasRole('USER')">
+                    <a th:href="@{/mypage}">ユーザーマイページ</a>
+                </li>
+            </ul>
+            
+            <!-- 認証状態に応じたボタン表示 -->
+            <div class="auth-buttons">
+                <!-- 未ログインの場合 -->
+                <div sec:authorize="isAnonymous()">
+                    <a th:href="@{/login}" class="btn btn-outline">ログイン</a>
+                    <a th:href="@{/register}" class="btn btn-primary">新規登録</a>
+                </div>
+                
+                <!-- ログイン済みの場合 -->
+                <div sec:authorize="isAuthenticated()">
+                    <span class="user-name">
+                        こんにちは、<span sec:authentication="name">ユーザー</span>さん
+                    </span>
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-outline">ログアウト</button>
+                    </form>
+                </div>
+            </div>
+            
+        </nav>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <section layout:fragment="content">
+            <!-- 子ページのコンテンツがここに挿入される -->
+            <p>デフォルトコンテンツ（子ページで上書きされます）</p>
+        </section>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <p>&copy; 2024 Thymeleaf 応用編. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script layout:fragment="scripts">
+        <!-- 子ページのスクリプトがここに挿入される -->
+    </script>
+</body>
+</html>
