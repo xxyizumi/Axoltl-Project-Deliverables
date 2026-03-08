@@ -43,47 +43,5 @@
             </p>
         </div>
     </section>
-    <script layout:fragment="scripts" th:inline="javascript">
-
-        const userNameRequiredErrorMessage = /*[[#{validation.required(ユーザ名)}]]*/'requiredErrorMessage';
-        const passwordNameRequiredErrorMessage = /*[[#{validation.required(パスワード)}]]*/'requiredErrorMessage';
-
-        window.addEventListener('DOMContentLoaded', () => {
-
-            const form = document.getElementById('loginform');
-            const errorMessage = document.getElementById('errorMessage');
-            const username = document.getElementById('username');
-            const password = document.getElementById('password');
-
-            const usernameError = document.getElementById('usernameError');
-            const passwordError = document.getElementById('passwordError');
-
-            console.log("form", form);
-
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                let valid = true;
-                if (!username.checkValidity()) {
-                    usernameError.textContent = userNameRequiredErrorMessage;
-                    usernameError.style.color = "red";
-                    valid = false;
-                } else {
-                    usernameError.textContent = "";
-                }
-
-                if (!password.checkValidity()) {
-                    passwordError.textContent = passwordNameRequiredErrorMessage;
-                    passwordError.style.color = "red";
-                    valid = false;
-                } else {
-                    passwordError.textContent = "";
-                }
-
-                if (valid) {
-                    from.submit();
-                }
-            });
-        });
-    </script>
 </body>
 </html>

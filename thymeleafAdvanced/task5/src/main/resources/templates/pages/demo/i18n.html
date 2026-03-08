@@ -72,6 +72,82 @@
                 <a th:href="@{/demo/i18n(lang=en)}" class="btn btn-outline">English</a>
             </div>
         </div>
+    
+        <div class="card" style="margin-top: 1rem;">
+            <!-- エラーメッセージ -->
+            <div th:if="${param.error}" class="alert alert-error">
+                ユーザー名またはパスワードが間違っています。
+            </div>
+            
+            <!-- ログアウトメッセージ -->
+            <div th:if="${param.logout}" class="alert alert-success">
+                ログアウトしました。
+            </div>
+            
+            <form novalidate id="loginform" th:action="@{/login}" method="post">
+                <div style="margin-bottom: 1rem;">
+                    <label for="username">ユーザー名</label>
+                    <input type="text" id="username" name="username" required
+                           style="width: 100%; padding: 0.5rem; margin-top: 0.25rem;" />
+                    <span id="usernameError"></span>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label for="password">パスワード</label>
+                    <input type="password" id="password" name="password" required
+                           style="width: 100%; padding: 0.5rem; margin-top: 0.25rem;">
+                    <span id="passwordError"></span>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    ログイン
+                </button>
+            </form>
+            
+            <p style="margin-top: 1rem; text-align: center; color: #7f8c8d;">
+                テストユーザー: user / password
+            </p>
+        </div>
     </section>
+    <script layout:fragment="scripts" th:inline="javascript">
+
+        const userNameRequiredErrorMessage = /*[[#{validation.required(ユーザ名)}]]*/'requiredErrorMessage';
+        const passwordNameRequiredErrorMessage = /*[[#{validation.required(パスワード)}]]*/'requiredErrorMessage';
+
+        window.addEventListener('DOMContentLoaded', () => {
+
+            const form = document.getElementById('loginform');
+            const errorMessage = document.getElementById('errorMessage');
+            const username = document.getElementById('username');
+            const password = document.getElementById('password');
+
+            const usernameError = document.getElementById('usernameError');
+            const passwordError = document.getElementById('passwordError');
+
+            console.log("form", form);
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                let valid = true;
+                if (!username.checkValidity()) {
+                    usernameError.textContent = userNameRequiredErrorMessage;
+                    usernameError.style.color = "red";
+                    valid = false;
+                } else {
+                    usernameError.textContent = "";
+                }
+
+                if (!password.checkValidity()) {
+                    passwordError.textContent = passwordNameRequiredErrorMessage;
+                    passwordError.style.color = "red";
+                    valid = false;
+                } else {
+                    passwordError.textContent = "";
+                }
+
+                if (valid) {
+                    from.submit();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
