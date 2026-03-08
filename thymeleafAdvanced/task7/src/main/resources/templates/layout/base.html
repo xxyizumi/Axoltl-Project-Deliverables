@@ -29,7 +29,7 @@
                 </div>
                 
                 <div sec:authorize="isAuthenticated() and hasRole('MANAGER')">
-                    <a th:href="@{/mypage}" th:text="#{nav.mypage}">マネージャマイページ</a>
+                    <a th:href="@{/mypage}">マネージャマイページ</a>
                 </div>
                 <li>
                     <select onchange="location.href='?lang=' + this.value">
