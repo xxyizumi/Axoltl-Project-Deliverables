@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>チャートデモ</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1 class="page-title">チャートデモ</h1>
+        <p class="page-description">th:inline="javascript"によるデータ埋め込み</p>
+        
+        <div class="card">
+            <canvas id="salesChart" width="400" height="200"></canvas>
+        </div>
+        <div class="card">
+            <canvas id="salesCompositionRatioChart" width="400" height="200"></canvas>
+        </div>
+        <div class="card" style="margin-top: 1rem;">
+            <h3>埋め込まれたデータ</h3>
+            <pre id="data-preview"></pre>
+        </div>
+    </section>
+
+    <script layout:fragment="scripts" th:inline="javascript">
+        // Thymeleafからデータを受け取る
+        const chartLabels = /*[[${chartLabels}]]*/'chartLabels';   // ["1月", "2月", ...]
+        const salesData = /*[[${salesData}]]*/'salesData';       // [120, 190, ...]
+        const chartTitle = /*[[${chartTitle}]]*/'chartTitle';     // "月別売上推移"
+        
+        // データのプレビュー表示
+        document.getElementById('data-preview').textContent = JSON.stringify({
+            labels: chartLabels,
+            data: salesData,
+            title: chartTitle
+        }, null, 2);
+        
+        // Chart.jsでグラフ描画
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: chartTitle,
+                    data: salesData,
+                    backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                    borderColor: 'rgba(52, 152, 219, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '売上（万円）'
+                        }
+                    }
+                }
+            }
+        });
+        const pieCtx = document.getElementById('salesCompositionRatioChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'pie',  // または 'doughnut'
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: chartTitle,
+                    data: salesData,
+                    backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                    borderColor: 'rgba(52, 152, 219, 1)',
+                    borderWidth: 1
+                }]
+            }
+
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>i18n Demo</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1 class="page-title" th:text="#{message.welcome}">ようこそ</h1>
+        <p class="page-description" th:text="#{app.description}">説明</p>
+        
+        <div class="card">
+            <h2>基本的なメッセージ式</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <th style="padding: 0.5rem; text-align: left;">キー</th>
+                    <th style="padding: 0.5rem; text-align: left;">値</th>
+                </tr>
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 0.5rem;"><code>#{app.name}</code></td>
+                    <td style="padding: 0.5rem;" th:text="#{app.name}">アプリ名</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 0.5rem;"><code>#{nav.home}</code></td>
+                    <td style="padding: 0.5rem;" th:text="#{nav.home}">ホーム</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 0.5rem;"><code>#{button.submit}</code></td>
+                    <td style="padding: 0.5rem;" th:text="#{button.submit}">送信</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="card" style="margin-top: 1rem;">
+            <h2>パラメータ付きメッセージ</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <th style="padding: 0.5rem; text-align: left;">式</th>
+                    <th style="padding: 0.5rem; text-align: left;">結果</th>
+                </tr>
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 0.5rem;"><code>#{auth.greeting(${userName})}</code></td>
+                    <td style="padding: 0.5rem;" th:text="#{auth.greeting(${userName})}">こんにちは</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 0.5rem;"><code>#{validation.required('メールアドレス')}</code></td>
+                    <td style="padding: 0.5rem;" th:text="#{validation.required('メールアドレス')}">必須</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 0.5rem;"><code>#{validation.minLength('パスワード', 8)}</code></td>
+                    <td style="padding: 0.5rem;" th:text="#{validation.minLength('パスワード', 8)}">最小文字数</td>
+                </tr>
+            </table>
+        </div>
+        <div class="card" style="margin-top: 1rem;">
+            <h2>日付フォーマット変換</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr style="border-bottom: 1px solid #ddd;">
+                <td style="padding: 0.5rem;" 
+                    th:with="fmt=#{date.format}" 
+                    th:text="${#temporals.format(#temporals.createNow(), fmt)}">日付</td>
+              </tr>
+            </table>
+        </div>
+        <div class="card" style="margin-top: 1rem;">
+            <h2>言語切り替えテスト</h2>
+            <p>ブラウザの言語設定を変更して、このページをリロードしてください。</p>
+            <p>または、以下のリンクをクリックしてください：</p>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <a th:href="@{/demo/i18n(lang=ja)}" class="btn btn-outline">日本語</a>
+                <a th:href="@{/demo/i18n(lang=en)}" class="btn btn-outline">English</a>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
