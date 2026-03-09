@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>About</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1 class="page-title">About</h1>
+        <p class="page-description">このアプリケーションについて</p>
+        
+        <div class="card">
+            <h2>Thymeleaf 応用編</h2>
+            <p>このカリキュラムでは、Thymeleafの応用的な機能を学習します。</p>
+            <ul>
+                <li>Layout Dialectによるテンプレート継承</li>
+                <li>Spring Security連携</li>
+                <li>JavaScript連携</li>
+                <li>メッセージ国際化</li>
+            </ul>
+        </div>
+    </section>
+
+    <script layout:fragment="scripts">
+        console.log("about page")
+    </script>
+</body>
+</html>
