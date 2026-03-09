@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE" th:text="#{app.name}">Thymeleaf 応用編</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <nav class="nav">
+            <a th:href="@{/}" class="logo" th:text="#{app.name}">Thymeleaf 応用編</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/}" th:text="#{nav.home}">ホーム</a></li>
+                <li><a th:href="@{/about}" th:text="#{nav.about}">About</a></li>
+                <li><a th:href="@{/contact}" th:text="#{nav.contact}">お問い合わせ</a></li>
+                <li><a th:href="@{/demo/i18n}" th:text="'i18n Demo'">i18n Demo</a></li>
+                
+                <!-- ログイン済みの場合のみ表示 -->
+                <div sec:authorize="isAuthenticated() and hasRole('ADMIN')">
+                    <a th:href="@{/admin/}">管理者</a>
+                </div>
+                
+                <div sec:authorize="isAuthenticated() and hasRole('USER')" >
+                    <a th:href="@{/mypage}" th:text="#{nav.mypage}">マイページ</a>
+                </div>
+                
+                <div sec:authorize="isAuthenticated() and hasRole('MANAGER')">
+                    <a th:href="@{/mypage}">マネージャマイページ</a>
+                </div>
+                <li>
+                    <select onchange="location.href='?lang=' + this.value">
+                        <option value="">言語を設定</option>
+                        <option value="ja">日本語</option>
+                        <option value="en">English</option>
+                    </select>
+                </li>
+            </ul>
+            
+            <!-- 認証状態に応じたボタン表示 -->
+            <div class="auth-buttons">
+                <!-- 未ログインの場合 -->
+                <div sec:authorize="isAnonymous()">
+                    <a th:href="@{/login}" class="btn btn-outline" th:text="#{auth.login}">ログイン</a>
+                    <a th:href="@{/register}" class="btn btn-primary" th:text="#{auth.register}">新規登録</a>
+                </div>
+                
+                <!-- ログイン済みの場合 -->
+                <div sec:authorize="isAuthenticated()">
+                    <span class="user-name" th:text="#{auth.greeting(${#authentication.name})}">こんにちは</span>
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-outline" th:text="#{auth.logout}">ログアウト</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <section layout:fragment="content">
+            <p>デフォルトコンテンツ</p>
+        </section>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <p th:text="#{footer.copyright}">© 2024</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script layout:fragment="scripts">
+    </script>
+</body>
+</html>
