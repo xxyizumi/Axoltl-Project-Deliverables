@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatisadvanced.mapper.UserMapper">
+
+    <!-- 基本的なResultMap（注文なし） -->
+    <resultMap id="UserResultMap" type="com.example.mybatisadvanced.entity.User">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="email" column="email"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!-- 1対多のResultMap: ユーザーと注文履歴 -->
+    <resultMap id="UserWithOrdersResultMap" type="com.example.mybatisadvanced.entity.User">
+        <id property="id" column="user_id"/>
+        <result property="name" column="user_name"/>
+        <result property="email" column="user_email"/>
+        <result property="createdAt" column="user_created_at"/>
+        <result property="updatedAt" column="user_updated_at"/>
+        
+        <!-- 1対多のマッピング: collection -->
+        <collection property="orders" ofType="com.example.mybatisadvanced.entity.Order">
+            <id property="id" column="order_id"/>
+            <result property="userId" column="order_user_id"/>
+            <result property="status" column="order_status"/>
+            <result property="totalAmount" column="order_total_amount"/>
+            <result property="orderedAt" column="order_ordered_at"/>
+        </collection>
+    </resultMap>
+
+    <!-- チャレンジ 1: 3階層のリレーション -->
+    <resultMap id="UserFullResultMap" type="com.example.mybatisadvanced.entity.User">
+        <id property="id" column="user_id"/>
+        <result property="name" column="user_name"/>
+        <result property="email" column="user_email"/>
+        <result property="createdAt" column="user_created_at"/>
+        <result property="updatedAt" column="user_updated_at"/>
+        <collection property="orders" ofType="com.example.mybatisadvanced.entity.Order">
+            <id property="id" column="order_id"/>
+            <result property="userId" column="order_user_id"/>
+            <result property="status" column="order_status"/>
+            <result property="totalAmount" column="order_total_amount"/>
+            <result property="orderedAt" column="order_ordered_at"/>
+            <collection property="orderDetails" ofType="com.example.mybatisadvanced.entity.OrderDetail">
+                <id property="id" column="id"/>
+                <result property="orderId" column="order_id"/>
+                <result property="productName" column="product_name"/>
+                <result property="quantity" column="quantity"/>
+                <result property="unitPrice" column="unit_price"/>
+                <result property="createdAt" column="created_at"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <!-- チャレンジ 2: 遅延読み込みの実装 -->
+    <resultMap id="UserWithOrdersForLazyResultMap" type="com.example.mybatisadvanced.entity.User">
+        <id property="id" column="user_id"/>
+        <result property="name" column="user_name"/>
+        <result property="email" column="user_email"/>
+        <result property="createdAt" column="user_created_at"/>
+        <result property="updatedAt" column="user_updated_at"/>
+        
+        <!-- 1対多のマッピング: collection -->
+        <collection property="orders" ofType="com.example.mybatisadvanced.entity.Order" 
+                    select="com.example.mybatisadvanced.mapper.OrderMapper.findByUserId"
+                    column="id" fetchType="lazy"/>
+    </resultMap>
+
+    <select id="findAll" resultType="com.example.mybatisadvanced.entity.User">
+        SELECT id, name, jsons, email, created_at
+        FROM users
+        ORDER BY id
+    </select>
+
+    <!-- IDでユーザーを取得（注文履歴付き）- JOINを使用 -->
+    <select id="findByIdWithOrders" resultMap="UserWithOrdersResultMap">
+        SELECT 
+            u.id AS user_id,
+            u.name AS user_name,
+            u.email AS user_email,
+            u.created_at AS user_created_at,
+            u.updated_at AS user_updated_at,
+            o.id AS order_id,
+            o.user_id AS order_user_id,
+            o.status AS order_status,
+            o.total_amount AS order_total_amount,
+            o.ordered_at AS order_ordered_at
+        FROM users u
+        LEFT JOIN orders o ON u.id = o.user_id
+        WHERE u.id = #{id}
+        ORDER BY o.ordered_at DESC
+    </select>
+
+    <!-- 全ユーザーを注文履歴付きで取得 - JOINでN+1問題を解決 -->
+    <select id="findAllWithOrders" resultMap="UserWithOrdersResultMap">
+        SELECT 
+            u.id AS user_id,
+            u.name AS user_name,
+            u.email AS user_email,
+            o.id AS order_id,
+            o.status AS order_status,
+            o.total_amount AS order_total_amount,
+            o.ordered_at AS order_ordered_at
+        FROM users u
+        LEFT JOIN orders o ON u.id = o.user_id
+        ORDER BY u.id, o.ordered_at DESC
+    </select>
+
+    <select id="findAllWithOrdersAndOrderDetails" resultMap="UserFullResultMap">
+        SELECT 
+            u.id AS user_id,
+            u.name AS user_name,
+            u.email AS user_email,
+            o.id AS order_id,
+            o.status AS order_status,
+            o.total_amount AS order_total_amount,
+            o.ordered_at AS order_ordered_at,
+            od.id AS id,
+            od.order_id  AS order_id,
+            od.product_name AS product_name,
+            od.quantity AS quantity,
+            od.unit_price AS unit_price,
+            od.created_at AS created_at
+        FROM users u
+        LEFT JOIN orders o ON u.id = o.user_id
+        LEFT JOIN order_details od ON o.id = od.order_id
+        ORDER BY u.id, o.ordered_at DESC
+    </select>
+
+    <select id="findAllForLazyWithOrders" resultMap="UserWithOrdersForLazyResultMap">
+        SELECT 
+            u.id AS user_id,
+            u.name AS user_name,
+            u.email AS user_email,
+            u.created_at AS user_created_at,
+            u.updated_at AS user_updated_at
+        FROM users u
+    </select>
+
+    <!-- ユーザーを登録 -->
+    <insert id="insert">
+        INSERT INTO users (name, email, jsons,created_at, updated_at)
+        VALUES 
+         (#{name}, #{email}, #{jsons,typeHandler=com.example.mybatisadvanced.handler.JsonStrTypeHandler}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    </insert>
+
+    <!-- バッチでユーザーを登録（foreach使用） -->
+    <insert id="insertBatch">
+        INSERT INTO users (name, email, created_at, updated_at)
+        VALUES 
+        <foreach collection="users" item="user" separator=",">
+            (#{user.name}, #{user.email}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        </foreach>
+    </insert>
+
+    <!-- カーソルで全ユーザーを取得 -->
+    <select id="findAllWithCursor" resultMap="UserResultMap" fetchSize="100">
+        SELECT id, name, email, created_at, updated_at
+        FROM users
+        ORDER BY id
+    </select>
+</mapper>
