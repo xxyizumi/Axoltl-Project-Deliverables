@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>権限別コンテンツデモ</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1 class="page-title">権限別コンテンツデモ</h1>
+        <p class="page-description">hasRole()とhasAnyRole()による表示制御</p>
+        
+        <!-- ログイン状態の表示 -->
+        <div class="card" sec:authorize="isAuthenticated()">
+            <h2>👤 現在のユーザー情報</h2>
+            <p>ユーザー名: <strong sec:authentication="name">-</strong></p>
+            <p>権限: <span sec:authentication="principal.authorities">[権限]</span></p>
+        </div>
+        
+        <!-- 未ログイン時のメッセージ -->
+        <div class="card" sec:authorize="isAnonymous()" style="background: #fff3cd;">
+            <p>⚠️ ログインしていません。各ユーザーでログインして表示を確認してください。</p>
+            <a th:href="@{/login}" class="btn btn-primary">ログイン</a>
+        </div>
+        
+        <!-- 権限別セクション -->
+        <div class="role-sections" style="margin-top: 1.5rem;">
+            
+            <!-- USERロール向け -->
+            <div sec:authorize="hasRole('USER')" class="card" 
+                 style="border-left: 4px solid #27ae60; margin-bottom: 1rem;">
+                <h3>🟢 USERロール向けコンテンツ</h3>
+                <p>あなたはUSERロールを持っています。</p>
+                <ul>
+                    <li>プロフィール編集</li>
+                    <li>投稿の作成・編集</li>
+                    <li>コメントの投稿</li>
+                </ul>
+            </div>
+            
+            <!-- MANAGERロール向け -->
+            <div sec:authorize="hasRole('MANAGER')" class="card" 
+                 style="border-left: 4px solid #3498db; margin-bottom: 1rem;">
+                <h3>🔵 MANAGERロール向けコンテンツ</h3>
+                <p>あなたはMANAGERロールを持っています。</p>
+                <ul>
+                    <li>ユーザーの投稿承認</li>
+                    <li>コンテンツのモデレーション</li>
+                    <li>レポート閲覧</li>
+                </ul>
+            </div>
+            
+            <!-- ADMINロール向け -->
+            <div sec:authorize="hasRole('ADMIN')" class="card" 
+                 style="border-left: 4px solid #e74c3c; margin-bottom: 1rem;">
+                <h3>🔴 ADMINロール向けコンテンツ</h3>
+                <p>あなたはADMINロールを持っています。</p>
+                <ul>
+                    <li>ユーザー管理</li>
+                    <li>システム設定</li>
+                    <li>ログ閲覧</li>
+                    <li>データベース管理</li>
+                </ul>
+            </div>
+
+            <!-- hasAnyRole()のデモ -->
+            <div class="card" style="margin-top: 1.5rem; background: #f8f9fa;">
+                <h2>hasAnyRole()のデモ</h2>
+
+                <!-- ADMIN または MANAGER -->
+                <div sec:authorize="hasAnyRole('ADMIN', 'MANAGER')" 
+                    style="padding: 1rem; margin: 0.5rem 0; background: #e8f4fd; border-radius: 4px;">
+                    <p>✅ <code>hasAnyRole('ADMIN', 'MANAGER')</code> に該当</p>
+                    <div style="margin-top: 0.5rem;">
+                        <button class="btn btn-outline">ユーザー一覧</button>
+                        <button class="btn btn-outline">レポート表示</button>
+                    </div>
+                </div>
+
+                <!-- USER または MANAGER -->
+                <div sec:authorize="hasAnyRole('USER', 'MANAGER')" 
+                    style="padding: 1rem; margin: 0.5rem 0; background: #e8f8e8; border-radius: 4px;">
+                    <p>✅ <code>hasAnyRole('USER', 'MANAGER')</code> に該当</p>
+                    <div style="margin-top: 0.5rem;">
+                        <button class="btn btn-outline">投稿作成</button>
+                        <button class="btn btn-outline">コメント投稿</button>
+                    </div>
+                </div>
+
+                <!-- 該当しない場合 -->
+                <div sec:authorize="isAuthenticated() and !hasAnyRole('ADMIN', 'MANAGER', 'USER')" 
+                    style="padding: 1rem; margin: 0.5rem 0; background: #fff3cd; border-radius: 4px;">
+                    <p>⚠️ 認証済みですが、主要ロールがありません</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
