@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<header th:fragment="main-header" class="main-header">
+    <div class="header-content">
+        <a th:href="@{/}" class="logo">Thymeleaf App</a>
+        
+        <div class="header-right">
+            <!-- ログイン済み -->
+            <div sec:authorize="isAuthenticated()" class="user-menu">
+                <span class="user-greeting">
+                    こんにちは、<strong sec:authentication="principal.displayName">ゲスト</strong>さん
+                </span>
+                <span class="user-role" sec:authorize="hasRole('ADMIN')" 
+                      style="background: #e74c3c; color: white; padding: 0.25rem 0.5rem; 
+                             border-radius: 4px; font-size: 0.75rem;">
+                    管理者
+                </span>
+                <span class="user-role" sec:authorize="hasRole('MANAGER') and !hasRole('ADMIN')" 
+                      style="background: #3498db; color: white; padding: 0.25rem 0.5rem; 
+                             border-radius: 4px; font-size: 0.75rem;">
+                    マネージャー
+                </span>
+                <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 1rem;">
+                    <button type="submit" class="btn btn-outline btn-sm">ログアウト</button>
+                </form>
+            </div>
+            
+            <!-- 未ログイン -->
+            <div sec:authorize="isAnonymous()">
+                <a th:href="@{/login}" class="btn btn-outline btn-sm">ログイン</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+</html>

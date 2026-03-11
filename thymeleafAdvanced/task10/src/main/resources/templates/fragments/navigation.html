@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<!-- メインナビゲーション -->
+<nav th:fragment="main-nav" class="main-navigation">
+    <ul class="nav-list">
+        <!-- 全員に表示 -->
+        <li><a th:href="@{/}">ホーム</a></li>
+        
+        <!-- ログイン済みユーザー向け -->
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/dashboard}">ダッシュボード</a>
+        </li>
+        <li sec:authorize="hasRole('USER')">
+            <a th:href="@{/my-posts}">マイ投稿</a>
+        </li>
+        
+        <!-- MANAGER以上向け -->
+        <li sec:authorize="hasAnyRole('MANAGER', 'ADMIN')">
+            <a th:href="@{/moderation}">モデレーション</a>
+        </li>
+        
+        <!-- ADMIN専用 -->
+        <li sec:authorize="hasRole('EDITOR')">
+            <a th:href="@{/editor}">コンテンツ編集</a>
+        </li>
+
+        <!-- ADMIN専用 -->
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin}">管理画面</a>
+        </li>
+
+        <!-- ゲスト向け -->
+        <li sec:authorize="isAnonymous()">
+            <a th:href="@{/login}">ログイン</a>
+        </li>
+    </ul>
+</nav>
+
+<!-- サイドバーメニュー -->
+<aside th:fragment="sidebar-menu" class="sidebar-menu">
+    <h3>メニュー</h3>
+    
+    <!-- 共通メニュー -->
+    <div class="menu-section">
+        <h4>一般</h4>
+        <ul>
+            <li><a th:href="@{/profile}" sec:authorize="isAuthenticated()">プロフィール</a></li>
+            <li><a th:href="@{/settings}" sec:authorize="isAuthenticated()">設定</a></li>
+        </ul>
+    </div>
+    
+    <!-- 管理メニュー（MANAGER以上） -->
+    <div class="menu-section" sec:authorize="hasAnyRole('MANAGER', 'ADMIN')">
+        <h4>管理</h4>
+        <ul>
+            <li><a th:href="@{/reports}">レポート</a></li>
+            <li><a th:href="@{/pending}">承認待ち</a></li>
+        </ul>
+    </div>
+    
+    <!-- システム管理メニュー（ADMIN専用） -->
+    <div class="menu-section" sec:authorize="hasRole('ADMIN')">
+        <h4>システム</h4>
+        <ul>
+            <li><a th:href="@{/admin/users}">ユーザー管理</a></li>
+            <li><a th:href="@{/admin/logs}">ログ</a></li>
+            <li><a th:href="@{/admin/settings}">システム設定</a></li>
+        </ul>
+    </div>
+</aside>
+
+</html>

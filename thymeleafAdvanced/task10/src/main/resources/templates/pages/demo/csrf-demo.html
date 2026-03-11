@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>CSRF対策デモ</title>
+    <style>
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        .token-display {
+            background: #e8f4fd;
+            padding: 1rem;
+            border-radius: 4px;
+            word-break: break-all;
+            font-family: monospace;
+        }
+        .result-box {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .result-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .result-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1 class="page-title">CSRF対策デモ</h1>
+        <p class="page-description">CSRFトークンの自動挿入とAjaxでの送信方法</p>
+        
+        <!-- CSRFトークンの確認 -->
+        <div class="card">
+            <h2>🔐 現在のCSRFトークン</h2>
+            <p>Spring SecurityがセッションごとにCSRFトークンを生成します。</p>
+            <div class="token-display">
+                <strong>トークン名:</strong> <span th:text="${_csrf.parameterName}">_csrf</span><br/>
+                <strong>トークン値:</strong> <span th:text="${_csrf.token}">token-value</span><br/>
+                <strong>ヘッダー名:</strong> <span th:text="${_csrf.headerName}">X-CSRF-TOKEN</span>
+            </div>
+        </div>
+        
+        <!-- 通常フォーム -->
+        <div class="card" style="margin-top: 1rem;">
+            <h2>📝 通常のフォーム送信</h2>
+            <p><code>th:action</code>を使用すると、CSRFトークンが自動挿入されます。</p>
+            
+            <form th:action="@{/demo/csrf-submit}" method="post" style="margin-top: 1rem;">
+                <div style="margin-bottom: 1rem;">
+                    <label for="message" style="display: block; margin-bottom: 0.25rem;">メッセージ:</label>
+                    <input type="text" id="message" name="message" 
+                           style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;"
+                           placeholder="テストメッセージを入力" />
+                </div>
+                <button type="submit" class="btn btn-primary">送信</button>
+            </form>
+            
+            <div style="margin-top: 1rem;">
+                <h4>生成されるHTML（開発者ツールで確認可能）:</h4>
+                <pre class="code-block">&lt;form action="/demo/csrf-submit" method="post"&gt;
+  &lt;input type="hidden" name="_csrf" value="[自動生成されたトークン]" /&gt;
+  ...
+&lt;/form&gt;</pre>
+            </div>
+        </div>
+        
+        <!-- Ajax送信 -->
+        <div class="card" style="margin-top: 1rem;">
+            <h2>🔄 Ajax（JavaScript）での送信</h2>
+            <p>AjaxリクエストではCSRFトークンをヘッダーに設定する必要があります。</p>
+            
+            <!-- メタタグでトークン情報を埋め込む -->
+            <div style="margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+                <h4>1. メタタグでトークン情報を埋め込む（headセクション）:</h4>
+                <pre class="code-block">&lt;meta name="_csrf" th:content="${_csrf.token}"/&gt;
+&lt;meta name="_csrf_header" th:content="${_csrf.headerName}"/&gt;</pre>
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label for="ajax-message" style="display: block; margin-bottom: 0.25rem;">メッセージ:</label>
+                <input type="text" id="ajax-message" 
+                       style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;"
+                       placeholder="Ajaxで送信するメッセージ" />
+            </div>
+            <button type="button" id="ajax-submit" class="btn btn-success">
+                Ajaxで送信
+            </button>
+            
+            <div id="ajax-result" class="result-box"></div>
+            
+            <div style="margin-top: 1rem;">
+                <h4>2. JavaScript でヘッダーに設定:</h4>
+                <pre class="code-block" th:inline="text">const csrfToken = '[[${_csrf.token}]]';
+const csrfHeader = '[[${_csrf.headerName}]]';
+
+fetch('/demo/csrf-ajax', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        [csrfHeader]: csrfToken  // ← ここでトークンを設定
+    },
+    body: JSON.stringify({ message: 'Hello' })
+});</pre>
+            </div>
+        </div>
+        
+        <!-- CSRFなしのリクエスト（エラーになる例） -->
+        <div class="card" style="margin-top: 1rem; border-left: 4px solid #e74c3c;">
+            <h2>⚠️ CSRFトークンなしの送信（403エラー）</h2>
+            <p>CSRFトークンを含めないリクエストは拒否されます。</p>
+            
+            <button type="button" id="no-csrf-submit" class="btn btn-danger">
+                トークンなしで送信（エラー確認用）
+            </button>
+            
+            <div id="no-csrf-result" class="result-box"></div>
+        </div>
+        <div class="card" style="margin-top: 1rem; border-left: 4px solid #e74c3c;">
+            <form th:action="@{/demo/upload}" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" />
+                <button type="submit" class="btn btn-primary">アップロード</button>
+            </form>
+        </div>
+
+        <!-- JavaScript for Ajax demos -->
+        <th:block th:inline="javascript">
+        <script>
+            // CSRFトークンの取得
+            const csrfToken = /*[[${_csrf.token}]]*/ '';
+            const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+            
+            // 正常なAjax送信
+            document.getElementById('ajax-submit').addEventListener('click', async () => {
+                const message = document.getElementById('ajax-message').value;
+                const resultBox = document.getElementById('ajax-result');
+                
+                try {
+                    const response = await fetch('/demo/csrf-ajax', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            [csrfHeader]: csrfToken
+                        },
+                        body: JSON.stringify({ message: message })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        resultBox.className = 'result-box result-success';
+                        resultBox.innerHTML = '✅ 成功: ' + data.message;
+                    } else {
+                        resultBox.className = 'result-box result-error';
+                        resultBox.innerHTML = '❌ エラー: HTTP ' + response.status;
+                    }
+                } catch (error) {
+                    resultBox.className = 'result-box result-error';
+                    resultBox.innerHTML = '❌ エラー: ' + error.message;
+                }
+                resultBox.style.display = 'block';
+            });
+            
+            // CSRFトークンなしの送信（エラー確認用）
+            document.getElementById('no-csrf-submit').addEventListener('click', async () => {
+                const resultBox = document.getElementById('no-csrf-result');
+                
+                try {
+                    const response = await fetch('/demo/csrf-ajax', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                            // CSRFトークンを含めない
+                        },
+                        body: JSON.stringify({ message: 'test' })
+                    });
+                    
+                    resultBox.className = 'result-box result-error';
+                    resultBox.innerHTML = '❌ HTTP ' + response.status + ' - CSRFトークンがないため拒否されました';
+                } catch (error) {
+                    resultBox.className = 'result-box result-error';
+                    resultBox.innerHTML = '❌ エラー: ' + error.message;
+                }
+                resultBox.style.display = 'block';
+            });
+        </script>
+        </th:block>
+    </section>
+</body>
+</html>
