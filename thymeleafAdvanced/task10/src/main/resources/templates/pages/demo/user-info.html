@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>ユーザー情報デモ</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1 class="page-title">ユーザー情報デモ</h1>
+        <p class="page-description">sec:authenticationによるユーザー情報の表示</p>
+        
+        <!-- 未ログイン時のメッセージ -->
+        <div sec:authorize="isAnonymous()" class="card" style="background: #fff3cd;">
+            <p>⚠️ ログインすると、ユーザー情報が表示されます。</p>
+            <a th:href="@{/login}" class="btn btn-primary">ログイン</a>
+        </div>
+        
+        <!-- ログイン済みの場合 -->
+        <div sec:authorize="isAuthenticated()">
+            
+            <!-- 基本情報カード -->
+            <div class="card">
+                <h2>👤 基本情報</h2>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <th style="padding: 0.75rem; text-align: left; width: 200px;">プロパティ</th>
+                        <th style="padding: 0.75rem; text-align: left;">値</th>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 0.75rem;"><code>name</code></td>
+                        <td style="padding: 0.75rem;">
+                            <strong sec:authentication="name">-</strong>
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 0.75rem;"><code>authorities</code></td>
+                        <td style="padding: 0.75rem;">
+                            <span sec:authentication="authorities">[権限なし]</span>
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 0.75rem;"><code>principal.username</code></td>
+                        <td style="padding: 0.75rem;">
+                            <span sec:authentication="principal.username">-</span>
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 0.75rem;"><code>principal.enabled</code></td>
+                        <td style="padding: 0.75rem;">
+                            <span sec:authentication="principal.enabled">-</span>
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 0.75rem;"><code>principal.accountNonExpired</code></td>
+                        <td style="padding: 0.75rem;">
+                            <span sec:authentication="principal.accountNonExpired">-</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.75rem;"><code>principal.credentialsNonExpired</code></td>
+                        <td style="padding: 0.75rem;">
+                            <span sec:authentication="principal.credentialsNonExpired">-</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- パーソナライズ例 -->
+            <div class="card" style="margin-top: 1rem;">
+                <h2>✨ パーソナライズ例</h2>
+                <div style="padding: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                            color: white; border-radius: 8px;">
+                    <h3 style="margin-bottom: 0.5rem;">
+                        こんにちは、<span sec:authentication="name">ゲスト</span>さん！
+                    </h3>
+                    <p style="opacity: 0.9; margin: 0;">
+                        あなたの権限: <span sec:authentication="authorities">[権限なし]</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- カスタム情報カード -->
+            <div class="card" style="margin-top: 1rem;">
+                <h2>🎨 カスタムユーザー情報</h2>
+                <p style="color: #666; margin-bottom: 1rem;">
+                    CustomUserDetailsで追加したプロパティを表示
+                </p>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <th style="padding: 0.75rem; text-align: left; width: 200px;">プロパティ</th>
+                        <th style="padding: 0.75rem; text-align: left;">値</th>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 0.75rem;"><code>principal.displayName</code></td>
+                        <td style="padding: 0.75rem;">
+                            <strong sec:authentication="principal.displayName">表示名未設定</strong>
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 0.75rem;"><code>principal.email</code></td>
+                        <td style="padding: 0.75rem;">
+                            <span sec:authentication="principal.email">メール未設定</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.75rem;"><code>principal.lastLoginAt</code></td>
+                        <td style="padding: 0.75rem;">
+                            <span sec:authentication="principal.lastLoginAt">ログイン時間未設定</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- 実用的なプロフィール表示例 -->
+            <div class="card" style="margin-top: 1rem;">
+                <h2>📋 プロフィールカード例</h2>
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; 
+                            background: #f8f9fa; border-radius: 8px;">
+                    <!-- アバター -->
+                    <!-- ユーザー名の頭文字を表示 -->
+                    <div th:style="'width: 64px; height: 64px; background: #6c757d; border-radius: 50%; 
+                            display: flex; align-items: center; justify-content: center; color: white; 
+                            font-size: 1.5rem; font-weight: bold;' + 
+                            'background:' + ${#strings.equals(#authentication.name, 'admin') 
+                                ? '#e74c3c' 
+                                :  #strings.equals(#authentication.name, 'manager') 
+                                    ? '#bc4fff' 
+                                    : '#3498db'}">
+                        <span th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0 0 0.25rem 0;">
+                            <span sec:authentication="principal.displayName">表示名</span>
+                        </h3>
+                        <p style="margin: 0; color: #666;">
+                            @<span sec:authentication="name">username</span>
+                        </p>
+                        <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: #999;">
+                            <span sec:authentication="principal.email">email@example.com</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>ユーザーJSON</title>
+</head>
+<body>
+    <section layout:fragment="content">
+        <h1 class="page-title">ユーザー一覧（JSONデータ）</h1>
+        <p class="page-description">JSON形式でのオブジェクト・配列受け渡し</p>
+        
+        <div class="card">
+            <input type="text" id="search-input" placeholder="ユーザーを検索..."
+                   style="width: 100%; padding: 0.5rem; margin-bottom: 1rem;">
+
+            <input id="idSortButton" type="button" value="ID順にソート" onclick="userIdSort();">
+            <input id="nameSortButton" type="button" value="名前順にソート" onclick="userNameSort();">
+            <input id="emailSortButton" type="button" value="メール順にソート" onclick="userEmailSort();">
+            <input id="roleSortButton" type="button" value="ロール順にソート" onclick="userNameSort();">
+            
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f5f5f5;">
+                        <th style="padding: 0.5rem; text-align: left;">ID</th>
+                        <th style="padding: 0.5rem; text-align: left;">名前</th>
+                        <th style="padding: 0.5rem; text-align: left;">メール</th>
+                        <th style="padding: 0.5rem; text-align: left;">ロール</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table-body">
+                    <!-- JavaScriptで動的に生成 -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <script layout:fragment="scripts" th:inline="javascript">
+        // サーバーからJSONデータを受け取る
+        let users = /*[[${users}]]*/'';
+        
+        // テーブルを描画する関数
+        function renderTable(data) {
+            const tbody = document.getElementById('user-table-body');
+            tbody.innerHTML = data.map(user => `
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 0.5rem;">${user.id}</td>
+                    <td style="padding: 0.5rem;">${user.name}</td>
+                    <td style="padding: 0.5rem;">${user.email}</td>
+                    <td style="padding: 0.5rem;">
+                        <span style="background: ${user.role === 'ADMIN' ? '#e74c3c' : '#3498db'}; 
+                                     color: white; padding: 0.25rem 0.5rem; border-radius: 4px;">
+                            ${user.role}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // 初期表示
+        renderTable(users);
+        
+        // 検索機能
+        document.getElementById('search-input').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            const filtered = users.filter(user => 
+                user.name.toLowerCase().includes(query) ||
+                user.email.toLowerCase().includes(query)
+            );
+            renderTable(filtered);
+        });
+
+
+        function userIdSort() {
+            users.sort((a, b) => new String(a.id).localeCompare(new String(b.id)));
+            renderTable(users);
+        }
+
+        function userNameSort() {
+            users.sort((a, b) => a.name.localeCompare(b.name));
+            renderTable(users);
+        }
+
+        function userEmailSort() {
+            users.sort((a, b) => a.email.localeCompare(b.email));
+            renderTable(users);
+        }
+        
+        function userRoleSort() {
+            users.sort((a, b) => a.role.localeCompare(b.role));
+            renderTable(users);
+        }
+
+    </script>
+</body>
+</html>
