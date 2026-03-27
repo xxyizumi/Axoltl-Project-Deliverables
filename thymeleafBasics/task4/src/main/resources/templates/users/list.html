@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/commonHead :: commonHead('ユーザー一覧')}">
+</head>
+<body>
+    <!-- ヘッダーフラグメント -->
+    <div th:replace="~{fragments/header :: header}"></div>
+   
+    <div class="main-content">
+        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+        <main>
+            <div th:replace="~{fragments/errorMessage :: alert(info, メッセージエリア)}"></div>
+            <h2>ユーザー一覧</h2>
+            
+            <a th:href="@{/users/new}" class="btn">+ 新規登録</a>
+            
+            <p th:if="${totalCount > 0}">
+                全 <span th:text="${totalCount}">0</span> 件のユーザーがいます。
+            </p>
+            <p th:unless="${totalCount > 0}">
+                ユーザーが登録されていません。
+            </p>
+
+            <table th:if="${totalCount > 0}">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>名前</th>
+                        <th>メールアドレス</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}">1</td>
+                        <td th:text="${user.name}">サンプル名</td>
+                        <td th:text="${user.email}">sample@example.com</td>
+                        <td>
+                            <a th:href="@{/users/{id}(id=${user.id})}">詳細</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+
+    </div>   
+    <!-- フッターフラグメント -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
