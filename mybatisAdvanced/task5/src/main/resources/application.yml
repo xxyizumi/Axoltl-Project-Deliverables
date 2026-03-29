@@ -1,0 +1,57 @@
+spring:
+  application:
+    name: mybatis-advanced
+  
+  # H2 Database設定
+  datasource:
+    url: jdbc:h2:mem:mybatisadvanced;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  # H2 Consoleを有効化（開発用）
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  # SQL初期化設定
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+
+# MyBatis設定
+mybatis:
+  # Mapperファイルの場所
+  mapper-locations: classpath:mapper/*.xml
+  
+  # エンティティのパッケージ（エイリアス用）
+  type-aliases-package: com.example.mybatisadvanced.entity
+  
+  # TypeHandlerのパッケージ
+  type-handlers-package: com.example.mybatisadvanced.handler
+  
+  configuration:
+    # キャメルケースとスネークケースの自動変換
+    map-underscore-to-camel-case: true
+    
+    # 遅延読み込みの有効化（N+1問題の解説用）
+    lazy-loading-enabled: true
+    aggressive-lazy-loading: false
+    
+    # デバッグ用のSQL出力
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# サーバー設定
+server:
+  port: 8080
+
+# ログ設定
+logging:
+  level:
+    # SqlLogPluginのログレベル
+    com.example.mybatisadvanced.plugin.SqlLogPlugin: DEBUG
+    # MyBatis本体のログ
+    org.mybatis: DEBUG
