@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thymeleaf 基礎編</title>
+</head>
+<body>
+    <h1>Thymeleaf 基礎編</h1>
+    
+    <!-- th:text で変数を表示 -->
+    <p th:text="${message}">デフォルトメッセージ</p>
+    
+    <hr>
+
+    <h2>メニュー</h2>
+    <ul>
+        <li><a th:href="@{/users}">ユーザー一覧</a></li>
+    </ul>
+</body>
+</html>
