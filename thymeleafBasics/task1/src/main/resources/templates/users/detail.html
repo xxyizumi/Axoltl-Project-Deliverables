@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ユーザー詳細</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #4CAF50; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>ユーザー詳細</h1>
+    <p th:unless="${user != null}">
+        ユーザーが登録されていません。
+    </p>
+    
+    <!-- ユーザーがいる場合のみテーブルを表示 -->
+    <table th:if="${user != null}">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>名前</th>
+                <th>メールアドレス</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- th:each でリストをループ -->
+            <tr>
+                <td th:text="${user.id}">1</td>
+                <td th:text="${user.name}">サンプル名</td>
+                <td th:text="${user.email}">sample@example.com</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
