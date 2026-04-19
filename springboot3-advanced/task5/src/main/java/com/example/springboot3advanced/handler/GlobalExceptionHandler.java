@@ -25,9 +25,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidationException(MethodArgumentNotValidException exp) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Validation failed");
-        Map<String, Object> properties = problemDetail.getProperties();
         // エラー詳細をproblemDetail.setProperty("errors", map)などで追加
-        problemDetail.setProperty("errors", properties);
+        problemDetail.setProperty("errors", exp.getMessage());
         return problemDetail;
     }
 }
