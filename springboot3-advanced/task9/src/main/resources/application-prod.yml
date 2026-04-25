@@ -1,0 +1,22 @@
+logging:
+  level:
+    root: WARN
+    com.example.springboot3advanced: INFO
+
+app:
+  message: "これは本番環境です (Production Mode)"
+  feature-flags:
+    beta-feature: false
+
+# 本番DB設定の例（環境変数から取得）
+spring:
+  # datasource:
+  #   url: jdbc:mysql://prod-db:3306/advanced_db
+  #   username: prod_user
+  #   # 環境変数 DB_PASSWORD が設定されていない場合はエラーになるか、空文字になる
+  #   password: ${DB_PASSWORD}
+  #   driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # 本番ではFlywayのクリーン実行を無効化
+  flyway:
+    clean-disabled: true

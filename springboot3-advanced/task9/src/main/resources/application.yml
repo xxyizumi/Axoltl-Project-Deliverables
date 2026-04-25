@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: springboot3-advanced
+
+  # MySQL Databaseの設定（デフォルト）
+  datasource:
+    url: jdbc:mysql://localhost:3306/advanced_db
+    username: user
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # JPAの設定
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # Flywayの設定
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    clean-disabled: false
+
+  profiles:
+    group:
+      # "local" を指定すると、dev, db-local, mock-auth が全て有効になる
+      local:
+        - dev
+        - db-local
+        - mock-auth
+      # "production" を指定すると、prod, db-aws, security-high が全て有効になる
+      production:
+        - prod
+        - db-aws
+        - security-high
+
+application:
+  security:
+    jwt:
+      # 環境変数から取得（設定されていない場合は起動エラーになるか、空文字になる）
+      secret-key: ${JWT_SECRET_KEY}
+      expiration: 86400000 # 1 day

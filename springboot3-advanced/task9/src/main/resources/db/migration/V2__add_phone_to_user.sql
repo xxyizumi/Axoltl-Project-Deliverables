@@ -1,0 +1,1 @@
+ALTER TABLE _user ADD phone VARCHAR(20);
