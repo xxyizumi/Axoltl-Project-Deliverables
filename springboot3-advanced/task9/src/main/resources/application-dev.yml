@@ -1,0 +1,9 @@
+logging:
+  level:
+    root: INFO
+    com.example.springboot3advanced: DEBUG
+
+app:
+  message: "これは開発環境です (Dev Mode)"
+  feature-flags:
+    beta-feature: true
